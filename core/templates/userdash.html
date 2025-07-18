@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Welcome + Progress -->
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <div class="card shadow-sm p-3">
+        <h6 class="text-primary">🏗 Project Status</h6>
+        <p class="mb-1">Current Progress: <strong>65%</strong></p>
+        <div class="progress mb-2">
+          <div class="progress-bar bg-primary" style="width: 65%">65%</div>
+        </div>
+        <p class="text-muted small">Expected Completion: <strong>October 2025</strong></p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3 text-center">
+        <h6 class="text-primary">💰 Payment</h6>
+        <p class="h5">₹8,50,000 / ₹12,00,000</p>
+        <p class="text-muted small">Next Due: ₹1,00,000 by <strong>25 July</strong></p>
+        <a href="#" class="btn btn-sm btn-outline-primary mt-2">Download Latest Invoice</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Milestone Chart -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="card-title text-primary">📊 Construction Milestones</h6>
+      <canvas id="progressChart" height="80"></canvas>
+    </div>
+  </div>
+
+  <!-- Timeline Section -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="card-title text-primary"><i class="bi bi-clock-history"></i> Work Timeline</h6>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">✅ Foundation Completed - 20 June</li>
+        <li class="list-group-item">🚧 Brickwork in Progress - 50% done</li>
+        <li class="list-group-item">📐 Plumbing Plan Finalized - 12 July</li>
+        <li class="list-group-item">⚡ Electrical Wiring Starting - 21 July</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- What's Next Section -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="card-title text-primary"><i class="bi bi-lightbulb"></i> What’s Next?</h6>
+      <ul class="list-group">
+        <li class="list-group-item"><input class="form-check-input me-2" type="checkbox"> Site Visit - Scheduled 22 July</li>
+        <li class="list-group-item"><input class="form-check-input me-2" type="checkbox"> Approve Painting Color</li>
+        <li class="list-group-item"><input class="form-check-input me-2" type="checkbox"> Confirm Kitchen Layout Plan</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Contact Form -->
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <h6 class="card-title text-primary"><i class="bi bi-chat-dots"></i> Ask Us Anything</h6>
+      <form>
+        <div class="mb-3">
+          <textarea class="form-control" rows="3" placeholder="Any question or concern about the site or payments?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<!-- Chart JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  new Chart(document.getElementById('progressChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Foundation', 'Brickwork', 'Plastering', 'Electrical', 'Painting', 'Finishing'],
+      datasets: [{
+        label: 'Completed %',
+        data: [100, 50, 20, 0, 0, 0],
+        backgroundColor: '#0d6efd'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true, max: 100 } }
+    }
+  });
+</script>
+{% endblock %}

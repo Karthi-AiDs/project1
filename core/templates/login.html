@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login / Sign Up | Vericon Constructions{% endblock %}
+
+{% block extra_css %}
+<!-- Bootstrap, Icons, Fonts -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+  <div class="welcome-box text-center mb-4">
+    <h1 class="vericon-title lato"> Vericon Constructions</h1>
+    <p class="text-primary lato fs-5">Welcome to Vericon Constructions – A Trusted Name in Infrastructure Excellence</p>
+    <p class="text-secondary lato small">Corporate Office: 2nd Floor, Alpha Towers, Mount Road, Chennai - 600002</p>
+  </div>
+
+  <div class="login-box p-4 border rounded shadow bg-white" style="max-width: 400px; width: 100%;">
+    <ul class="nav nav-tabs nav-justified mb-3" id="authTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">Login</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab">Sign Up</button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="authTabContent">
+      <!-- Login Tab -->
+      <div class="tab-pane fade show active" id="login" role="tabpanel">
+        <form method="post" action="{% url 'login' %}" novalidate>
+          {% csrf_token %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+          <div class="mb-3">
+            <label>Email address</label>
+            <input type="email" class="form-control" name="email" placeholder="Enter email" required>
+          </div>
+          <div class="mb-3">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Enter password" required>
+          </div>
+          <div class="mb-3">
+            <label>Select Role</label>
+            <select class="form-control" name="role" required>
+              <option value="admin">Admin</option>
+              <option value="engineer">Site Manager</option>
+              <option value="temp_user">Temp User</option>
+              <option value="regular_user">Regular User</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+      </div>
+
+      <!-- Signup Tab -->
+      <div class="tab-pane fade" id="signup" role="tabpanel">
+        <form method="post" action="{% url 'signup' %}" novalidate>
+          {% csrf_token %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+          <div class="mb-3">
+            <label>Email address</label>
+            <input type="email" class="form-control" name="email" placeholder="Enter email" required>
+          </div>
+          <div class="mb-3">
+            <label>Create Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Create password" required>
+          </div>
+          <div class="mb-3">
+            <label>Phone Number</label>
+            <input type="text" class="form-control" name="phone" placeholder="Enter phone number" required>
+          </div>
+          <div class="mb-3">
+            <label>Select Role</label>
+            <select class="form-control" name="role" required>
+              <option value="admin">Admin</option>
+              <option value="engineer">Site Manager</option>
+              <option value="temp_user">Temp User</option>
+              <option value="regular_user">Regular User</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/gps-validation.js' %}"></script>
+{% endblock %}

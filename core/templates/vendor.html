@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vendor Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="header text-center mb-4">
+    <h2 class="fw-bold">Vendor Management</h2>
+    <p class="text-muted">Vendor Portal - Track Equipment, Transactions & Services</p>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
+    <button class="btn btn-outline-warning active"><i class="bi bi-person-lines-fill"></i> Vendor Profiles</button>
+    <button class="btn btn-outline-secondary"><i class="bi bi-cash-stack"></i> Transactions</button>
+    <button class="btn btn-outline-secondary"><i class="bi bi-truck-front"></i> Equipment Tracking</button>
+    <button class="btn btn-outline-secondary"><i class="bi bi-clock-history"></i> Service History</button>
+    <button class="btn btn-outline-secondary"><i class="bi bi-currency-rupee"></i> Payment Status</button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="mb-4">
+    <input type="text" class="form-control mb-2" placeholder="🔍 Search vendors, equipment, or transactions...">
+    <div class="row g-2">
+      <div class="col-md-4">
+        <select class="form-select">
+          <option>All Vendors</option>
+          <option>Active Vendors</option>
+          <option>Pending Approval</option>
+          <option>Equipment Owners</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select">
+          <option>All Equipment</option>
+          <option>JCB Excavators</option>
+          <option>Lorries</option>
+          <option>Cranes</option>
+          <option>Bulldozers</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select">
+          <option>Payment Status</option>
+          <option>Paid</option>
+          <option>Pending</option>
+          <option>Overdue</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vendor Profiles Section -->
+  <div class="mb-5">
+    <h4 class="mb-3">🏢 Vendor Profiles</h4>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col">
+        <div class="border rounded p-3 bg-light">
+          <h5><i class="bi bi-person-badge-fill"></i> Mahindra Heavy Equipment</h5>
+          <p class="text-muted">Heavy Machinery Specialist</p>
+          <p><i class="bi bi-geo-alt-fill"></i> Chennai</p>
+          <p><i class="bi bi-truck"></i> Equipment: 2 Lorries, 1 JCB</p>
+          <p><i class="bi bi-cash"></i> Last Payment: ₹20,000 - <span class="text-success">Paid</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Overview -->
+  <div class="mb-5">
+    <h4 class="mb-3">💰 Payment Overview</h4>
+    <div class="row text-center">
+      <div class="col-md-3">
+        <div class="border rounded p-3 bg-light">
+          <div class="h4">₹15,50,000</div>
+          <small>Total Outstanding</small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="border rounded p-3 bg-light">
+          <div class="h4">₹8,75,000</div>
+          <small>This Month</small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="border rounded p-3 bg-light">
+          <div class="h4">₹3,25,000</div>
+          <small>Overdue</small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="border rounded p-3 bg-light">
+          <div class="h4">12</div>
+          <small>Active Vendors</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions Table -->
+  <div class="mb-5">
+    <h4 class="mb-3">📊 Recent Transactions</h4>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark text-warning">
+          <tr>
+            <th>Date</th>
+            <th>Vendor</th>
+            <th>Equipment</th>
+            <th>Service Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>GPS Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-07-10</td>
+            <td>K. Ramesh</td>
+            <td>JCB</td>
+            <td>Repair</td>
+            <td>₹5,000</td>
+            <td><span class="badge bg-success">Paid</span></td>
+            <td>12.9716° N, 77.5946° E</td>
+          </tr>
+          <tr>
+            <td>2025-07-12</td>
+            <td>R. Prakash</td>
+            <td>Lorry</td>
+            <td>Fuel Refill</td>
+            <td>₹3,200</td>
+            <td><span class="badge bg-warning text-dark">Pending</span></td>
+            <td>13.0827° N, 80.2707° E</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Service History -->
+  <div class="mb-5">
+    <h4 class="mb-3">🔧 Service History</h4>
+    <ul class="list-group">
+      <li class="list-group-item">JCB Excavator - Oil Change - 2025-06-22 - ₹1,500</li>
+      <li class="list-group-item">Crane - Brake Check - 2025-06-15 - ₹2,800</li>
+      <li class="list-group-item">Lorry - Tyre Replacement - 2025-07-01 - ₹7,000</li>
+    </ul>
+  </div>
+
+  <!-- GPS Tracking -->
+  <div class="mb-5">
+    <h4 class="mb-3">📍 Equipment GPS Tracking</h4>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="border rounded p-3 bg-light">
+          <h6><i class="bi bi-truck"></i> Crane - ID #3432</h6>
+          <p class="text-muted mb-1">Vendor: S. Priya</p>
+          <p class="mb-0"><i class="bi bi-geo"></i> Location: 10.7905° N, 78.7047° E</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="border rounded p-3 bg-light">
+          <h6><i class="bi bi-truck"></i> JCB - ID #7764</h6>
+          <p class="text-muted mb-1">Vendor: K. Ramesh</p>
+          <p class="mb-0"><i class="bi bi-geo"></i> Location: 11.0168° N, 76.9558° E</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Access Restrictions -->
+  <div class="mb-5">
+    <h4 class="mb-3">🔒 Access Control</h4>
+    <div class="alert alert-success">
+      <ul class="mb-0">
+        <li>✅ Vendors can only view their own transaction history</li>
+        <li>✅ Equipment details limited to vendor's registered vehicles</li>
+        <li>✅ GPS tracking only for vendor's own equipment</li>
+        <li>✅ Service history restricted to vendor's maintenance records</li>
+        <li>✅ Payment status visible only for vendor's pending amounts</li>
+        <li>❌ No access to other vendors' financial information</li>
+        <li>❌ Cannot view competitor equipment or locations</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

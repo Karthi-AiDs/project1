@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payroll Management | Vericon Constructions{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 text-gray-900 font-sans">
+  <div class="grid grid-cols-3 items-center mb-6">
+    <!-- Left -->
+    <div></div>
+
+    <!-- Center Heading -->
+    <div class="text-center">
+      <h1 class="text-3xl font-bold text-[#003366]">Payroll Management</h1>
+      <p class="text-sm text-[#003366]">Construction Management System</p>
+    </div>
+
+    <!-- Right Current Period -->
+    <div class="flex justify-end items-center space-x-2 text-sm text-gray-600">
+      <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      <span>
+        <span class="font-semibold">Current Period:</span>
+        <span id="current-date" class="text-[#003366] font-medium"></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Create Payroll Form -->
+  <div class="bg-white p-6 rounded-lg shadow mb-8">
+    <div class="flex items-center mb-4">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="m5 5 4 4 2-2 6 6"></path>
+      </svg>
+      <h2 class="text-xl font-semibold ml-2">Create New Payroll Record</h2>
+    </div>
+    <form id="payroll-form">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div>
+          <label for="start_date" class="block text-sm font-medium mb-1">Start Date</label>
+          <input type="date" id="start_date" class="w-full border p-2 rounded" required>
+        </div>
+        <div>
+          <label for="end_date" class="block text-sm font-medium mb-1">End Date</label>
+          <input type="date" id="end_date" class="w-full border p-2 rounded" required>
+        </div>
+        <div>
+          <label for="total_hours" class="block text-sm font-medium mb-1">Total Hours</label>
+          <input type="number" id="total_hours" class="w-full border p-2 rounded" step="0.1" min="0" required>
+        </div>
+        <div>
+          <label for="hourly_rate" class="block text-sm font-medium mb-1">Hourly Rate ($)</label>
+          <input type="number" id="hourly_rate" class="w-full border p-2 rounded" step="0.01" min="0" required>
+        </div>
+        <div>
+          <label for="location" class="block text-sm font-medium mb-1">Location</label>
+          <select id="location" class="w-full border p-2 rounded" required>
+            <option value="">Select location</option>
+            <option value="Site A">Site A</option>
+            <option value="Site B">Site B</option>
+            <option value="Site C">Site C</option>
+            <option value="Office">Office</option>
+          </select>
+        </div>
+        <div>
+          <label for="calculated_salary" class="block text-sm font-medium mb-1">Calculated Salary ($)</label>
+          <input type="number" id="calculated_salary" class="w-full border p-2 bg-gray-100 rounded" readonly>
+        </div>
+      </div>
+      <div class="mt-4">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Create Payroll Record</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Payroll Table -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <div class="flex items-center mb-4">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+        <polyline points="14,2 14,8 20,8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10,9 9,9 8,9"></polyline>
+      </svg>
+      <h2 class="text-xl font-semibold ml-2">Payroll Records</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="text-left px-4 py-2">Employee</th>
+            <th class="text-left px-4 py-2">Period</th>
+            <th class="text-left px-4 py-2">Hours</th>
+            <th class="text-left px-4 py-2">Rate</th>
+            <th class="text-left px-4 py-2">Location</th>
+            <th class="text-left px-4 py-2">Salary</th>
+            <th class="text-left px-4 py-2">Status</th>
+            <th class="text-left px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <!-- Sample row -->
+          <tr>
+            <td class="px-4 py-2">
+              <div class="font-medium">John Doe</div>
+              <div class="text-sm text-gray-500">worker1@example.com</div>
+            </td>
+            <td class="px-4 py-2">01/01/2024 - 01/15/2024</td>
+            <td class="px-4 py-2">80</td>
+            <td class="px-4 py-2">$25.00</td>
+            <td class="px-4 py-2">Site A</td>
+            <td class="px-4 py-2 font-medium">$2000.00</td>
+            <td class="px-4 py-2">
+              <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">Locked</span>
+            </td>
+            <td class="px-4 py-2">
+              <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs font-medium">Exported</span>
+            </td>
+          </tr>
+          <!-- More rows can be added here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const startDate = document.getElementById("start_date");
+  const endDate = document.getElementById("end_date");
+  const totalHours = document.getElementById("total_hours");
+  const hourlyRate = document.getElementById("hourly_rate");
+  const salary = document.getElementById("calculated_salary");
+
+  totalHours.addEventListener("input", calculateSalary);
+  hourlyRate.addEventListener("input", calculateSalary);
+
+  function calculateSalary() {
+    const hours = parseFloat(totalHours.value) || 0;
+    const rate = parseFloat(hourlyRate.value) || 0;
+    salary.value = (hours * rate).toFixed(2);
+  }
+
+  // Set current date range for "Current Period"
+  const currentDate = new Date();
+  const formatted = currentDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+  document.getElementById("current-date").textContent = formatted;
+</script>
+{% endblock %}

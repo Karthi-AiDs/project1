@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Attendance | Velandev Constructions{% endblock %}
+
+{% block extra_css %}
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    body {
+      font-family: 'Lato', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .card-title {
+      font-weight: 600;
+    }
+    .stat-icon {
+      font-size: 2rem;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">🕒 Attendance Tracker</h2>
+
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <div class="text-warning stat-icon"><i class="bi bi-check-circle-fill"></i></div>
+          <h6 class="card-title mt-2">Total Days</h6>
+          <p class="h5">30</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <div class="text-success stat-icon"><i class="bi bi-person-fill-check"></i></div>
+          <h6 class="card-title mt-2">Present</h6>
+          <p class="h5">26</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <div class="text-danger stat-icon"><i class="bi bi-person-x-fill"></i></div>
+          <h6 class="card-title mt-2">Absent</h6>
+          <p class="h5">4</p>
+          <button class="btn btn-sm btn-outline-danger mt-2" data-bs-toggle="collapse" data-bs-target="#absentList">View</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <div class="text-primary stat-icon"><i class="bi bi-clock-history"></i></div>
+          <h6 class="card-title mt-2">Overtime (hrs)</h6>
+          <p class="h5">8.5</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="absentList" class="collapse mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title text-danger">Absent Details</h6>
+        <ul class="list-group">
+          <li class="list-group-item">2025-07-13 – John Doe</li>
+          <li class="list-group-item">2025-07-10 – Jane Smith</li>
+          <li class="list-group-item">2025-07-06 – Ravi Kumar</li>
+          <li class="list-group-item">2025-07-01 – Fatima Ali</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title text-warning">Monthly Attendance</h6>
+          <canvas id="monthlyLineChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title text-warning">Weekly Attendance</h6>
+          <canvas id="monthlyAttendanceChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body text-center">
+      <h5 class="card-title text-warning">Live GPS Validation</h5>
+      <p class="text-muted">Your current GPS location will be recorded on Clock In/Out</p>
+      <span class="badge bg-secondary">Current GPS: <span id="gps_display">Fetching...</span></span>
+      <br/><br/>
+      <input type="hidden" name="gps_location" id="gps_location">
+      <button type="button" class="btn btn-outline-dark me-3">Clock In</button>
+      <button type="button" class="btn btn-outline-dark">Clock Out</button>
+      <div class="mt-3 alert alert-warning text-center">⏰ Overtime Alert: 3.5 hrs</div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="card-title text-warning">Attendance History</h6>
+      <div class="table-responsive" style="font-size: 1.15rem;">
+        <table class="table table-bordered table-hover">
+          <thead class="table-dark text-warning">
+            <tr>
+              <th>Date</th>
+              <th>Check In</th>
+              <th>Check Out</th>
+              <th>GPS</th>
+              <th>Overtime</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2025-07-15</td>
+              <td>09:00</td>
+              <td>18:30</td>
+              <td>12.9716,77.5946</td>
+              <td>3.5</td>
+              <td><span class="badge bg-success">Present</span></td>
+            </tr>
+            <tr>
+              <td>2025-07-14</td>
+              <td>09:15</td>
+              <td>17:45</td>
+              <td>12.9718,77.5950</td>
+              <td>2.0</td>
+              <td><span class="badge bg-success">Present</span></td>
+            </tr>
+            <tr>
+              <td>2025-07-13</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0.0</td>
+              <td><span class="badge bg-danger">Absent</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      const location = pos.coords.latitude + ',' + pos.coords.longitude;
+      document.getElementById('gps_display').innerText = location;
+      document.getElementById('gps_location').value = location;
+    });
+  }
+
+  new Chart(document.getElementById('monthlyAttendanceChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [{
+        label: 'Present Days',
+        data: [5, 6, 5, 6],
+        backgroundColor: '#ffc107'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, max: 7 } }
+    }
+  });
+
+  new Chart(document.getElementById('monthlyLineChart'), {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+      datasets: [{
+        label: 'Present Days',
+        data: [20, 18, 22, 21, 25, 19, 23],
+        fill: true,
+        backgroundColor: 'rgba(255, 193, 7, 0.2)',
+        borderColor: '#ffc107'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+</script>
+{% endblock %}
