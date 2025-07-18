@@ -160,11 +160,12 @@ class Payroll(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
-    total_hours = models.FloatField()
-    hourly_rate = models.DecimalField(max_digits=8, decimal_places=2)
+    total_hours = models.DecimalField(max_digits=5, decimal_places=2)
+    hourly_rate = models.DecimalField(max_digits=7, decimal_places=2)
     location = models.CharField(max_length=100)
-    calculated_salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    calculated_salary = models.FloatField(default=0.0)
+    is_approved = models.BooleanField(default=False)  # this caused your IntegrityError
 
-    def __str__(self):
-        return f"{self.user} | {self.start_date} - {self.end_date}"
+    def save(self, *args, **kwargs):
+        self.calculated_salary = self.total_hours * self.hourly_rate
+        super().save(*args, **kwargs)

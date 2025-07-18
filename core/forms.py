@@ -15,7 +15,7 @@ class AttendanceForm(forms.ModelForm):
 class PayrollForm(forms.ModelForm):
     class Meta:
         model = Payroll
-        exclude = ['calculated_salary', 'created_at']
+        exclude = ['user','calculated_salary', 'created_at']
 
 class MaterialForm(forms.ModelForm):
     class Meta:

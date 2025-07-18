@@ -178,16 +178,17 @@ def add_vendor(request):
 
 @login_required
 def add_payroll(request):
-    form = PayrollForm(request.POST or None)
-    payrolls = Payroll.objects.filter(user=request.user)
-
-    if form.is_valid():
-        payroll = form.save(commit=False)
-        payroll.user = request.user
-        payroll.save()
-        return redirect('payroll')  # This redirects to the payroll listing page
-
-    return render(request, 'payroll.html', {'form': form, 'payrolls': payrolls})
+    if request.method == 'POST':
+        form = PayrollForm(request.POST)
+        if form.is_valid():
+            payroll = form.save(commit=False)
+            payroll.user = request.user
+            # No need to set payroll.is_approved manually if default=False is in model
+            payroll.save()
+            return redirect('payroll')
+    else:
+        form = PayrollForm()
+    return render(request, 'payroll.html', {'form': form})
 
 # ----------------- MODULE VIEW PAGES -----------------
 
@@ -205,7 +206,7 @@ def reports_view(request):
 
 @login_required
 def payroll_view(request):
-    payrolls = Payroll.objects.filter(user=request.user).order_by('-start_date')  # latest first
+    payrolls = Payroll.objects.all()  # shows only current user's records
     return render(request, 'payroll.html', {'payrolls': payrolls})
 
 
