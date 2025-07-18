@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, blank=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='regular_user')
-
+    
     is_approved = models.BooleanField(default=False)
     is_blocked = models.BooleanField(default=False)
     approved_by = models.IntegerField(null=True, blank=True)
@@ -137,13 +137,15 @@ class Material(models.Model):
     name = models.CharField(max_length=100)
     quantity = models.FloatField()
     unit = models.CharField(max_length=20)
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     purchase_date = models.DateField()
     barcode = models.CharField(max_length=100, blank=True, null=True)
     photo = models.ImageField(upload_to='materials/')
     submitted_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'temp_user'})
     is_approved = models.BooleanField(default=False)
     submitted_at = models.DateTimeField(auto_now_add=True)
+    submitted_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
 
     def __str__(self):
         return self.name

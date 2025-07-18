@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block back_button %}
+  <button class="back-btn" onclick="history.back()">← Back</button>
+{% endblock %}
 
 {% block title %}Attendance | Velandev Constructions{% endblock %}
 

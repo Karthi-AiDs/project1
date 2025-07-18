@@ -21,7 +21,8 @@ urlpatterns = [
     path('settings/', views.settings_view, name='settings'),
     path('payroll/', views.payroll_view, name='payroll'),
     path('materials/', views.materials_view, name='materials'),
-
+    path('notifications/', views.notifications, name='notifications'),
+    
     # Form Submissions (if needed)
     path('add_attendance/', views.add_attendance, name='add_attendance'),
     path('add_vendor/', views.add_vendor, name='add_vendor'),

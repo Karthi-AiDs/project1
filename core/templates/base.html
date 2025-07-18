@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,62 +12,128 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet" />
 
   {% block extra_css %}{% endblock %}
+  <style>
+    .back-btn {
+      background-color: #ffc107;
+      color: #000;
+      border: none;
+      padding: 8px 18px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .back-btn:hover {
+      background-color: #e0a800;
+    }
+    .dropdown-menu-notify {
+      width: 300px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+    .notify-item {
+      font-size: 14px;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
 </head>
 <body style="font-family: 'Poppins', sans-serif; background-color: #ffffff; color: #000; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column;">
 
-  <!-- Header -->
-  <div style="background: linear-gradient(to right, #000000, #1e3a8a); color: #ffffff; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;">
-    <div style="display: flex; align-items: center; gap: 15px;">
-      <div style="background-color: #ffffff; color: #000; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;">
+<!-- Header -->
+<div style="background: linear-gradient(to right, #000000, #1e3a8a); color: #ffffff; padding: 10px 20px;">
+  <div class="d-flex align-items-center justify-content-between">
+    
+    <!-- Left: Profile -->
+    <div class="dropdown" style="position: relative;">
+      <div style="background-color: #ffffff; color: #000; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;" onclick="toggleProfileDropdown()">
         <i class="bi bi-person-fill"></i>
       </div>
-    </div>
-
-    <!-- Logo -->
-    <div style="font-size: 22px; font-weight: 700; letter-spacing: 1px; text-align: center; flex: 1; display: flex; justify-content: center; align-items: center; gap: 10px;">
-      <span style="font-family: 'Orbitron', sans-serif; font-size: 28px; color: #ffffff;">V</span>
-      VERICON
-    </div>
-
-    <div style="display: flex; align-items: center; gap: 15px;">
-      <div style="background-color: #ffffff; color: #000; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;">
-        <i class="bi bi-bell-fill"></i>
+      <div id="profileDropdown" style="display: none; position: absolute; left: 0; top: 45px; background: #fff; color: #000; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 1000;">
+        <a href="{% url 'update_profile' %}" style="display: block; padding: 10px 15px; text-decoration: none; color: #000;">Update Profile</a>
+        <a href="{% url 'logout' %}" style="display: block; padding: 10px 15px; text-decoration: none; color: #000;">Logout</a>
       </div>
+    </div>
+
+    <!-- Center: Logo -->
+    <div style="flex-grow: 1; text-align: center;">
+      <span style="font-family: 'Orbitron', sans-serif; font-size: 28px; color: #ffffff;">V</span>
+      <span style="font-size: 22px; font-weight: 700; letter-spacing: 1px;">VERICON</span>
+    </div>
+
+    <!-- Right: Notifications & Settings -->
+    <div class="d-flex align-items-center gap-3">
+      <div class="dropdown">
+        <a class="dropdown-toggle" href="#" role="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #ffffff; color: #000; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+          <i class="bi bi-bell-fill position-relative">
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+          </i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-notify" aria-labelledby="notifDropdown">
+          <li class="notify-item">✔ New vendor approval pending</li>
+          <li class="notify-item">📍 Site Manager added a new report</li>
+          <li class="notify-item">💰 Payroll cycle closed</li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-center text-primary" href="{% url 'notifications' %}">View All Notifications</a></li>
+        </ul>
+      </div>
+
       <a href="{% url 'settings' %}" style="background-color: #ffffff; color: #000; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;">
         <i class="bi bi-gear-fill"></i>
       </a>
     </div>
-  </div>
 
-  <!-- Main Content -->
-  <div style="flex: 1; padding: 40px 20px;">
-    {% block content %}{% endblock %}
   </div>
+</div>
 
-  <!-- Footer -->
-  <div class="container-fluid py-4" style="background: linear-gradient(to right, #000000, #1e3a8a); color: #ffffff;">
-    <div class="row justify-content-center text-center text-md-start">
-      <div class="col-md-4 mb-3 mb-md-0">
-        <h5 class="fw-bold text-uppercase text-center">FOLLOW US</h5>
-        <p class="text-center"><i class="bi bi-instagram"></i> velandev.constructions</p>
-        <p class="text-center"><i class="bi bi-twitter"></i> Velandev.constructions</p>
-        <p class="text-center"><i class="bi bi-linkedin"></i> Velandev.life</p>
-      </div>
-      <div class="col-md-4">
-        <h5 class="fw-bold text-uppercase text-center">CONTACT US</h5>
-        <p class="text-center"><i class="bi bi-envelope-fill"></i> 
-          <a href="mailto:velandevconstructions@gmail.com" class="text-light text-decoration-underline">
-            velandevconstructions@gmail.com
-          </a>
-        </p>
-        <p class="text-center"><i class="bi bi-telephone-fill"></i> 9876543210 / 1234567890</p>
-        <p class="text-center"><i class="bi bi-geo-alt-fill"></i> Saveetha Nagar, Thandalam, Chennai</p>
-      </div>
+<!-- Back Button -->
+<div class="container mt-4">
+  {% block back_button %}{% endblock %}
+</div>
+
+<!-- Main Content -->
+<div style="flex: 1; padding: 40px 20px;">
+  {% block content %}{% endblock %}
+</div>
+
+<!-- Footer -->
+<div class="container-fluid py-4" style="background: linear-gradient(to right, #000000, #1e3a8a); color: #ffffff;">
+  <div class="row justify-content-center text-center text-md-start">
+    <div class="col-md-4 mb-3 mb-md-0">
+      <h5 class="fw-bold text-uppercase text-center">FOLLOW US</h5>
+      <p class="text-center"><i class="bi bi-instagram"></i> velandev.constructions</p>
+      <p class="text-center"><i class="bi bi-twitter"></i> Velandev.constructions</p>
+      <p class="text-center"><i class="bi bi-linkedin"></i> Velandev.life</p>
+    </div>
+    <div class="col-md-4">
+      <h5 class="fw-bold text-uppercase text-center">CONTACT US</h5>
+      <p class="text-center"><i class="bi bi-envelope-fill"></i> 
+        <a href="mailto:velandevconstructions@gmail.com" class="text-light text-decoration-underline">
+          velandevconstructions@gmail.com
+        </a>
+      </p>
+      <p class="text-center"><i class="bi bi-telephone-fill"></i> 9876543210 / 1234567890</p>
+      <p class="text-center"><i class="bi bi-geo-alt-fill"></i> Saveetha Nagar, Thandalam, Chennai</p>
     </div>
   </div>
+</div>
 
-  <!-- Bootstrap + Extra Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  {% block extra_js %}{% endblock %}
+<!-- Scripts -->
+<script>
+  function toggleProfileDropdown() {
+    const dropdown = document.getElementById("profileDropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
+
+  // Optional: Close dropdown on outside click
+  window.onclick = function(event) {
+    const dropdown = document.getElementById("profileDropdown");
+    if (!event.target.closest('.dropdown')) {
+      dropdown.style.display = "none";
+    }
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

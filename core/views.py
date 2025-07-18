@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
+from django.core.files.storage import FileSystemStorage
+from datetime import datetime
 
 from .models import Attendance, Payroll, Vendor, Material
 from .forms import AttendanceForm, PayrollForm, VendorForm, MaterialForm
@@ -34,6 +36,50 @@ def payroll_view(request):
 
     payrolls = Payroll.objects.filter(user=request.user)
     return render(request, 'core/payroll.html', {'payrolls': payrolls})
+
+
+@login_required
+def materials_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        quantity = request.POST.get('quantity')
+        unit = request.POST.get('unit')
+        vendor_input = request.POST.get('vendor')
+        purchase_date = request.POST.get('purchase_date')
+        barcode = request.POST.get('barcode')
+        photo = request.FILES.get('photo')
+
+        if vendor_input:
+            try:
+                vendor = Vendor.objects.get(id=vendor_input)
+            except Vendor.DoesNotExist:
+                vendor = None
+        else:
+            vendor = None
+
+        Material.objects.create(
+            name=name,
+            quantity=quantity,
+            unit=unit,
+            vendor=vendor,
+            purchase_date=purchase_date,
+            barcode=barcode,
+            photo=photo,
+            submitted_by=request.user
+        )
+        messages.success(request, "Material submitted successfully.")
+        print("Material POST received:", name, quantity, vendor)
+        return redirect('materials')
+
+    vendors = Vendor.objects.all()
+    materials = Material.objects.all()
+    return render(request, 'materials.html', {'vendors': vendors, 'materials': materials})
+
+@login_required
+def vendor_view(request):
+    vendors = Vendor.objects.all()  # Get all vendors
+    return render(request, 'vendor.html', {'vendors': vendors})
+
 
 # ----------------- AUTHENTICATION -----------------
 
@@ -196,9 +242,7 @@ def add_payroll(request):
 def attendance_view(request):
     return render(request, 'attendance.html')
 
-@login_required
-def vendor_view(request):
-    return render(request, 'vendor.html')
+
 
 @login_required
 def reports_view(request):
@@ -210,9 +254,6 @@ def payroll_view(request):
     return render(request, 'payroll.html', {'payrolls': payrolls})
 
 
-@login_required
-def materials_view(request):
-    return render(request, 'materials.html')
 
 @login_required
 def settings_view(request):
@@ -220,3 +261,6 @@ def settings_view(request):
 
 def dashboard_view(request):
     return render(request, 'dashboard.html')
+
+def notifications(request):
+    return render(request, 'core/notifications.html')
