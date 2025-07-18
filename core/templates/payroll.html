@@ -5,7 +5,7 @@
 
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'style.css' %}">
 <script src="https://cdn.tailwindcss.com"></script>
 {% endblock %}
 
@@ -45,43 +45,87 @@
       </svg>
       <h2 class="text-xl font-semibold ml-2">Create New Payroll Record</h2>
     </div>
-    <form id="payroll-form">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-          <label for="start_date" class="block text-sm font-medium mb-1">Start Date</label>
-          <input type="date" id="start_date" class="w-full border p-2 rounded" required>
-        </div>
-        <div>
-          <label for="end_date" class="block text-sm font-medium mb-1">End Date</label>
-          <input type="date" id="end_date" class="w-full border p-2 rounded" required>
-        </div>
-        <div>
-          <label for="total_hours" class="block text-sm font-medium mb-1">Total Hours</label>
-          <input type="number" id="total_hours" class="w-full border p-2 rounded" step="0.1" min="0" required>
-        </div>
-        <div>
-          <label for="hourly_rate" class="block text-sm font-medium mb-1">Hourly Rate ($)</label>
-          <input type="number" id="hourly_rate" class="w-full border p-2 rounded" step="0.01" min="0" required>
-        </div>
-        <div>
-          <label for="location" class="block text-sm font-medium mb-1">Location</label>
-          <select id="location" class="w-full border p-2 rounded" required>
-            <option value="">Select location</option>
-            <option value="Site A">Site A</option>
-            <option value="Site B">Site B</option>
-            <option value="Site C">Site C</option>
-            <option value="Office">Office</option>
-          </select>
-        </div>
-        <div>
-          <label for="calculated_salary" class="block text-sm font-medium mb-1">Calculated Salary ($)</label>
-          <input type="number" id="calculated_salary" class="w-full border p-2 bg-gray-100 rounded" readonly>
-        </div>
-      </div>
-      <div class="mt-4">
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Create Payroll Record</button>
-      </div>
-    </form>
+    <form method="POST" action="{% url 'add_payroll' %}">
+
+  {% csrf_token %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    
+    <div>
+      <label for="start_date" class="block text-sm font-medium mb-1">Start Date</label>
+      <input type="date" id="start_date" name="start_date" class="w-full border p-2 rounded" required>
+    </div>
+    
+    <div>
+      <label for="end_date" class="block text-sm font-medium mb-1">End Date</label>
+      <input type="date" id="end_date" name="end_date" class="w-full border p-2 rounded" required>
+    </div>
+    
+    <div>
+      <label for="total_hours" class="block text-sm font-medium mb-1">Total Hours</label>
+      <input type="number" id="total_hours" name="total_hours" class="w-full border p-2 rounded" step="0.1" min="0" required>
+    </div>
+    
+    <div>
+      <label for="hourly_rate" class="block text-sm font-medium mb-1">Hourly Rate ($)</label>
+      <input type="number" id="hourly_rate" name="hourly_rate" class="w-full border p-2 rounded" step="0.01" min="0" required>
+    </div>
+    
+    <div>
+      <label for="location" class="block text-sm font-medium mb-1">Location</label>
+      <select id="location" name="location" class="w-full border p-2 rounded" required>
+        <option value="">Select location</option>
+        <option value="Site A">Site A</option>
+        <option value="Site B">Site B</option>
+        <option value="Site C">Site C</option>
+        <option value="Office">Office</option>
+      </select>
+    </div>
+    
+    <div>
+      <label for="calculated_salary" class="block text-sm font-medium mb-1">Calculated Salary ($)</label>
+      <input type="number" id="calculated_salary" name="calculated_salary" class="w-full border p-2 bg-gray-100 rounded" readonly>
+    </div>
+
+  </div>
+
+  <div class="mt-4">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Create Payroll Record</button>
+  </div>
+</form>
+<h2 class="text-xl font-bold mt-10 mb-4">Submitted Payroll Records</h2>
+
+{% if payrolls %}
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white rounded shadow">
+      <thead>
+        <tr class="bg-gray-200 text-left text-sm font-semibold">
+          <th class="py-2 px-4">Start</th>
+          <th class="py-2 px-4">End</th>
+          <th class="py-2 px-4">Hours</th>
+          <th class="py-2 px-4">Rate</th>
+          <th class="py-2 px-4">Location</th>
+          <th class="py-2 px-4">Total</th>
+        </tr>
+      </thead>
+      <tbody class="text-sm">
+        {% for payroll in payrolls %}
+        <tr class="border-t">
+          <td class="py-2 px-4">{{ payroll.start_date }}</td>
+          <td class="py-2 px-4">{{ payroll.end_date }}</td>
+          <td class="py-2 px-4">{{ payroll.total_hours }}</td>
+          <td class="py-2 px-4">₹{{ payroll.hourly_rate }}</td>
+          <td class="py-2 px-4">{{ payroll.location }}</td>
+          <td class="py-2 px-4 font-semibold">₹{{ payroll.total_hours|floatformat:2|add:"0"|floatformat:2|floatformat }} × ₹{{ payroll.hourly_rate|floatformat:2 }} = ₹{{ payroll.total_hours|floatformat:2|floatformat|add:"0"|floatformat|floatformat|floatformat|floatformat }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-gray-600">No payroll records found.</p>
+{% endif %}
+
+
   </div>
 
   <!-- Payroll Table -->

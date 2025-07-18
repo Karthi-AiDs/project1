@@ -151,28 +151,20 @@ class Material(models.Model):
 # ------------------------------------
 # 5. Payroll Management – Karthikeyan
 # ------------------------------------
+from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class Payroll(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'regular_user'})
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     total_hours = models.FloatField()
     hourly_rate = models.DecimalField(max_digits=8, decimal_places=2)
     location = models.CharField(max_length=100)
-    calculated_salary = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
-
-    is_approved = models.BooleanField(default=False)
-    is_locked = models.BooleanField(default=False)
-    is_disputed = models.BooleanField(default=False)
-    dispute_note = models.TextField(blank=True, null=True)
-    exported_to_accounting = models.BooleanField(default=False)
-
+    calculated_salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        if not self.is_locked and not self.is_approved:
-            self.calculated_salary = self.total_hours * float(self.hourly_rate)
-        super().save(*args, **kwargs)
-
     def __str__(self):
-        return f"{self.user.email} | {self.start_date} - {self.end_date}"
+        return f"{self.user} | {self.start_date} - {self.end_date}"

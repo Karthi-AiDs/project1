@@ -3,24 +3,37 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.http import HttpResponse
 
 from .models import Attendance, Payroll, Vendor, Material
 from .forms import AttendanceForm, PayrollForm, VendorForm, MaterialForm
 
 User = get_user_model()
-
 @login_required
 def payroll_view(request):
     if request.method == 'POST':
-        form = PayrollForm(request.POST)
-        if form.is_valid():
-            payroll = form.save(commit=False)
-            payroll.user = request.user  # set the user if model has a user field
-            payroll.save()
-            return redirect('site_dashboard')  # redirect after saving
-    else:
-        form = PayrollForm()
-    return render(request, 'payroll.html', {'form': form, 'title': 'Add Payroll'})
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        total_hours = float(request.POST.get('total_hours'))
+        hourly_rate = float(request.POST.get('hourly_rate'))
+        location = request.POST.get('location')
+
+        calculated_salary = total_hours * hourly_rate
+
+        Payroll.objects.create(
+            user=request.user,
+            start_date=start_date,
+            end_date=end_date,
+            total_hours=total_hours,
+            hourly_rate=hourly_rate,
+            location=location,
+            calculated_salary=calculated_salary
+        )
+        messages.success(request, "Payroll record created.")
+        return redirect('payroll_view')
+
+    payrolls = Payroll.objects.filter(user=request.user)
+    return render(request, 'core/payroll.html', {'payrolls': payrolls})
 
 # ----------------- AUTHENTICATION -----------------
 
@@ -38,7 +51,6 @@ def login_view(request):
 
             login(request, user)
 
-            # Redirect based on role
             if selected_role == 'admin':
                 return redirect('admin_dashboard')
             elif selected_role == 'engineer':
@@ -95,8 +107,7 @@ def admin_dashboard(request):
         User.objects.filter(role='regular_user').count(),
         User.objects.filter(role='temp_user').count()
     ]
-
-    attendance_data = [10, 20, 30, 25, 40, 50]  # dummy for now
+    attendance_data = [10, 20, 30, 25, 40, 50]  # dummy
 
     return render(request, 'admindash.html', {
         'role_counts': role_counts,
@@ -116,7 +127,7 @@ def temp_user_home(request):
     return render(request, 'temp_user_home.html')
 
 
-# ----------------- PROFILE & SETTINGS -----------------
+# ----------------- PROFILE -----------------
 
 @login_required
 def update_profile(request):
@@ -130,9 +141,6 @@ def update_profile(request):
         user.save()
         messages.success(request, "Profile updated successfully.")
     return redirect('settings')
-
-
-
 
 
 # ----------------- FEATURE MODULES -----------------
@@ -171,11 +179,15 @@ def add_vendor(request):
 @login_required
 def add_payroll(request):
     form = PayrollForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect('site_dashboard')
-    return render(request, 'core/form.html', {'form': form, 'title': 'Add Payroll'})
+    payrolls = Payroll.objects.filter(user=request.user)
 
+    if form.is_valid():
+        payroll = form.save(commit=False)
+        payroll.user = request.user
+        payroll.save()
+        return redirect('payroll')  # This redirects to the payroll listing page
+
+    return render(request, 'payroll.html', {'form': form, 'payrolls': payrolls})
 
 # ----------------- MODULE VIEW PAGES -----------------
 
@@ -193,7 +205,9 @@ def reports_view(request):
 
 @login_required
 def payroll_view(request):
-    return render(request, 'payroll.html')
+    payrolls = Payroll.objects.filter(user=request.user).order_by('-start_date')  # latest first
+    return render(request, 'payroll.html', {'payrolls': payrolls})
+
 
 @login_required
 def materials_view(request):
@@ -204,4 +218,4 @@ def settings_view(request):
     return render(request, 'settings.html')
 
 def dashboard_view(request):
-    return render(request, 'dashboard.html')  # ✅ not just static HTML
+    return render(request, 'dashboard.html')
