@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Attendance | Velandev Constructions{% endblock %}
+
+{% block extra_css %}
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <style>
+    body {
+      font-family: 'Lato', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .card-title {
+      font-weight: 600;
+    }
+    .stat-icon {
+      font-size: 2rem;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+  <div aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-4" style="z-index: 9999; min-width: 350px;">
+    {% for message in messages %}
+    <div class="toast show text-white bg-{% if message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %} border-0 shadow-lg"
+         role="alert" aria-live="assertive" aria-atomic="true"
+         style="font-size: 1.2rem; padding: 20px; font-weight: bold;">
+      <div class="d-flex">
+        <div class="toast-body">{{ message }}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+<div class="container py-4">
+  <h2 class="mb-4 text-center">🕒 Attendance Tracker</h2>
+
+  <!-- Stats -->
+  <!-- Replace dynamic loop with static blocks -->
+<!-- Stats (Wrapped in .row) -->
+<div class="row g-4 mb-4">
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <div class="text-warning stat-icon"><i class="bi bi-check-circle-fill"></i></div>
+        <h6 class="card-title mt-2">Total Days</h6>
+        <p class="h5">30</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <div class="text-success stat-icon"><i class="bi bi-person-check-fill"></i></div>
+        <h6 class="card-title mt-2">Present</h6>
+        <p class="h5">26</p>
+        <button class="btn btn-sm btn-outline-success mt-2" data-bs-toggle="collapse" data-bs-target="#presentList">View</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <div class="text-danger stat-icon"><i class="bi bi-person-x-fill"></i></div>
+        <h6 class="card-title mt-2">Absent</h6>
+        <p class="h5">4</p>
+        <button class="btn btn-sm btn-outline-danger mt-2" data-bs-toggle="collapse" data-bs-target="#absentList">View</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <div class="text-primary stat-icon"><i class="bi bi-clock-history"></i></div>
+        <h6 class="card-title mt-2">Overtime (hrs)</h6>
+        <p class="h5">8.5</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- Present/Absent Details -->
+  <div id="presentList" class="collapse mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title text-success">Present Details</h6>
+        <ul class="list-group">
+          {% for i in 20|make_list %}
+          <li class="list-group-item">2025-07-15 – John Doe</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="absentList" class="collapse mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title text-danger">Absent Details</h6>
+        <ul class="list-group">
+          <li class="list-group-item">2025-07-13 – John Doe</li>
+          <li class="list-group-item">2025-07-14 – John Doe</li>
+          <li class="list-group-item">2025-07-15 – John Doe</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title text-warning">Monthly Attendance</h6>
+          <canvas id="monthlyLineChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title text-warning">Weekly Attendance</h6>
+          <canvas id="monthlyAttendanceChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GPS Clock + Actions -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body text-center">
+      <h5 class="card-title text-warning">Live GPS Validation</h5>
+      <p class="text-muted">Your current GPS location will be recorded on Clock In/Out</p>
+      <div class="mt-3 border rounded px-4 py-3 bg-light d-inline-block">
+        <span class="text-success fw-bold fs-5">📍 GPS Location: </span>
+        <span id="gps_display" class="fw-semibold fs-5">Fetching...</span>
+      </div>
+
+      <input type="hidden" name="gps_location" id="gps_location">
+
+      <div class="mt-3">
+        <span class="badge bg-primary fs-6">⏱️ Current Time: <span id="liveTime">--:--:--</span></span>
+      </div>
+
+      <form method="post" action="{% url 'add_attendance' %}" class="mt-3">
+        {% csrf_token %}
+        <input type="hidden" id="clock_in_time" name="clock_in_time">
+        <input type="hidden" id="clock_out_time" name="clock_out_time">
+        <input type="hidden" id="gps_location" name="gps_location">
+
+        <button type="submit" name="action" value="in" class="btn btn-outline-success me-3" onclick="setClockIn()">Clock In</button>
+        <button type="submit" name="action" value="out" class="btn btn-outline-danger" onclick="setClockOut()">Clock Out</button>
+      </form>
+
+      <div class="mt-3 alert alert-warning text-center">⏰ Overtime Alert: 3.5 hrs</div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="card-title text-warning">Clock In/Out Records</h6>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-dark text-warning">
+            <tr>
+              <th>Date</th>
+              <th>Clock In</th>
+              <th>Clock Out</th>
+              <th>GPS</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in clock_records %}
+            <tr>
+              <td>{{ record.date }}</td>
+              <td>{{ record.clock_in }}</td>
+              <td>{{ record.clock_out }}</td>
+              <td>{{ record.gps }}</td>
+              <td>
+                <span class="badge {% if record.clock_out %}bg-success{% else %}bg-warning{% endif %}">
+                  {% if record.clock_out %}Complete{% else %}Pending{% endif %}
+                </span>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center">No records found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // GPS and Time
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      const location = pos.coords.latitude + ',' + pos.coords.longitude;
+      document.getElementById('gps_display').innerText = location;
+      document.getElementById('gps_location').value = location;
+    });
+  }
+
+  setInterval(() => {
+    const now = new Date();
+    document.getElementById("liveTime").textContent = now.toLocaleTimeString();
+  }, 1000);
+
+  function setClockIn() {
+    document.getElementById('clock_in_time').value = new Date().toLocaleTimeString();
+  }
+
+  function setClockOut() {
+    document.getElementById('clock_out_time').value = new Date().toLocaleTimeString();
+  }
+
+  // Toast messages
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.toast').forEach(el => {
+      new bootstrap.Toast(el, { delay: 4000 }).show();
+    });
+  });
+
+  // Charts
+  new Chart(document.getElementById('monthlyAttendanceChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [{
+        label: 'Present Days',
+        data: [5, 6, 5, 6],
+        backgroundColor: '#ffc107'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, max: 7 } }
+    }
+  });
+
+  new Chart(document.getElementById('monthlyLineChart'), {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+      datasets: [{
+        label: 'Present Days',
+        data: [20, 18, 22, 21, 25, 19, 23],
+        fill: true,
+        backgroundColor: 'rgba(255, 193, 7, 0.2)',
+        borderColor: '#ffc107'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+</script>
+{% endblock %}

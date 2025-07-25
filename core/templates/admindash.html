@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Welcome, Admin</h2>
+
+  <!-- User Counts Summary -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-white bg-primary">
+        <div class="card-body text-center">
+          <h5>Total Users</h5>
+          <h3>{{ total_users }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-success">
+        <div class="card-body text-center">
+          <h5>Engineers</h5>
+          <h3>{{ engineer_count }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-warning">
+        <div class="card-body text-center">
+          <h5>Regular Users</h5>
+          <h3>{{ regular_count }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-danger">
+        <div class="card-body text-center">
+          <h5>Temp Users</h5>
+          <h3>{{ temp_count }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Management Section -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card border-info">
+        <div class="card-body text-center">
+          <h5 class="card-title">User Management</h5>
+          <p class="card-text">View, approve, and manage all registered users.</p>
+          <a href="{% url 'user_management' %}" class="btn btn-outline-info">Manage Users</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Role Distribution</h5>
+          <canvas id="roleChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Attendance Overview</h5>
+          <canvas id="attendanceChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx1 = document.getElementById('roleChart').getContext('2d');
+  new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+      labels: ['Admin', 'Engineer', 'Regular User', 'Temp User'],
+      datasets: [{
+        label: 'User Roles',
+        data: [{{ admin_count }}, {{ engineer_count }}, {{ regular_count }}, {{ temp_count }}],
+        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
+      }]
+    }
+  });
+
+  const ctx2 = document.getElementById('attendanceChart').getContext('2d');
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+      datasets: [{
+        label: 'Attendance',
+        data: [12, 19, 3, 5, 2],  // Replace with dynamic data if available
+        backgroundColor: '#007bff',
+      }]
+    }
+  });
+</script>
+{% endblock %}

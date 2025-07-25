@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Site Engineer Dashboard | Vericon Constructions{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  .wrapper {
+    display: flex;
+    height: 100%;
+  }
+  .sidebar {
+    width: 250px;
+    background: linear-gradient(to bottom right, #0d1440, #2152ff);
+    color: white;
+    padding-top: 80px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    transition: transform 0.3s ease-in-out;
+  }
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+  .sidebar a {
+    display: block;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+  }
+  .sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .main {
+    margin-left: 250px;
+    padding: 30px;
+    transition: margin-left 0.3s ease-in-out;
+    width: 100%;
+  }
+  .main.shifted {
+    margin-left: 0;
+  }
+
+  #sidebarToggle {
+    position: fixed;
+    top: 90px;
+    left: 10px;
+    z-index: 1000;
+    background: #0d1440;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .dashboard-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .icon-circle {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .assigned-sites-section {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 1rem;
+    border: 1px solid #dee2e6;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Sidebar + Main Content -->
+<div class="wrapper">
+  <!-- Sidebar -->
+
+  <!-- Main Content -->
+  <div class="main" id="mainContent">
+    <h4 class="mb-3 fw-semibold">Welcome, {{ user.get_full_name }}</h4>
+
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+      <i class="bi bi-shield-lock-fill me-2"></i>
+      <div><strong>Note:</strong> Data is restricted to your assigned sites. Temporary submissions are editable only within 24 hours.</div>
+    </div>
+
+        <div class="assigned-sites-section my-5">
+      <h5 class="fw-semibold mb-3">Assigned Site Overview</h5>
+      <div class="row g-4">
+        <div class="col-md-6 col-xl-4">
+          <div class="card site-card border-info border-start border-4 shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-building me-2 text-info"></i>Site A - Chennai</h5>
+              <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i><strong>Location:</strong> Ambattur</p>
+              <p class="mb-0"><i class="bi bi-check-circle-fill text-success me-1"></i><strong>Status:</strong> Active</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="card site-card border-warning border-start border-4 shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-building me-2 text-warning"></i>Site B - Coimbatore</h5>
+              <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i><strong>Location:</strong> Peelamedu</p>
+              <p class="mb-0"><i class="bi bi-hourglass-split text-warning me-1"></i><strong>Status:</strong> Under Inspection</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="card site-card border-secondary border-start border-4 shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-building me-2 text-secondary"></i>Site C - Madurai</h5>
+              <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i><strong>Location:</strong> Anna Nagar</p>
+              <p class="mb-0"><i class="bi bi-check2-square text-secondary me-1"></i><strong>Status:</strong> Completed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-circle bg-primary text-white me-3">
+                <i class="bi bi-person-check-fill fs-4"></i>
+              </div>
+              <h5 class="card-title mb-0">Attendance</h5>
+            </div>
+            <p class="card-text">Monitor real-time check-ins and worker logs for your assigned site.</p>
+            <div class="mt-auto">
+              <a href="{% url 'attendance' %}" class="btn btn-sm btn-outline-primary">View Attendance</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-circle bg-success text-white me-3">
+                <i class="bi bi-box-seam fs-4"></i>
+              </div>
+              <h5 class="card-title mb-0">Materials</h5>
+            </div>
+            <p class="card-text">Request and confirm delivery of construction materials.</p>
+            <div class="mt-auto">
+              <a href="{% url 'materials' %}" class="btn btn-sm btn-outline-success">Manage Materials</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-circle bg-warning text-white me-3">
+                <i class="bi bi-truck fs-4"></i>
+              </div>
+              <h5 class="card-title mb-0">Vendors</h5>
+            </div>
+            <p class="card-text">Log vendor visits and upload delivery proofs.</p>
+            <div class="mt-auto">
+              <a href="{% url 'vendor' %}" class="btn btn-sm btn-outline-warning">View Vendors</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-circle bg-danger text-white me-3">
+                <i class="bi bi-journal-text fs-4"></i>
+              </div>
+              <h5 class="card-title mb-0">Reports</h5>
+            </div>
+            <p class="card-text">Submit site reports and daily progress with images.</p>
+            <div class="mt-auto">
+              <a href="{% url 'reports' %}" class="btn btn-sm btn-outline-danger">View Reports</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-circle bg-dark text-white me-3">
+                <i class="bi bi-currency-rupee fs-4"></i>
+              </div>
+              <h5 class="card-title mb-0">Payroll</h5>
+            </div>
+            <p class="card-text">View attendance-based wages and raise disputes if needed.</p>
+            <div class="mt-auto">
+              <a href="{% url 'payroll' %}" class="btn btn-sm btn-outline-dark">View Payroll</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toggle Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggleButton = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('mainContent');
+
+    toggleButton.addEventListener('click', function () {
+      sidebar.classList.toggle('collapsed');
+      main.classList.toggle('shifted');
+    });
+  });
+</script>
+{% endblock %}

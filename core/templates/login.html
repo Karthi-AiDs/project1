@@ -1,0 +1,185 @@
+{% load static %}
+
+
+{% block extra_css %}
+<!-- Bootstrap, Icons, Fonts -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Lato', sans-serif;
+  }
+
+  .bg-slideshow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-size: cover;
+    background-position: center;
+    animation: slideshow 25s infinite;
+    z-index: -1;
+  }
+
+  @keyframes slideshow {
+    0%   { background-image: url("{% static 'images/bg1.png' %}"); }
+    20%  { background-image: url("{% static 'images/bg2.png' %}"); }
+    40%  { background-image: url("{% static 'images/bg3.png' %}"); }
+    60%  { background-image: url("{% static 'images/bg4.png' %}"); }
+    80%  { background-image: url("{% static 'images/bg5.png' %}"); }
+    100% { background-image: url("{% static 'images/bg1.png' %}"); }
+  }
+
+  .main-container {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .login-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(6px);
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+.welcome-box {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.4);  /* Dark background for contrast */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.vericon-title {
+  font-weight: 700;
+  font-size: 2rem;
+  color: #fff;  /* Override any black */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-slideshow">
+
+</div>
+
+<div class="main-container">
+  <div class="welcome-box">
+    
+  <h1 class="vericon-title">Vericon Constructions</h1>
+<p class="text-primary fs-5 fw-bold">Welcome to Vericon Constructions – A Trusted Name in Infrastructure Excellence</p>
+<p class="text-center mt-4">
+  <a href="{% static 'index.html' %}" class="text-decoration-none fw-semibold" style="font-size: 25px; color: white;">About Us</a>
+</p>
+</div>
+
+
+
+
+  <div class="login-box">
+    <ul class="nav nav-tabs nav-justified mb-3" id="authTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">Login</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab">Sign Up</button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="authTabContent">
+      <!-- Login Tab -->
+      <div class="tab-pane fade show active" id="login" role="tabpanel">
+        <form method="post" action="{% url 'login' %}" novalidate>
+          {% csrf_token %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+          <div class="mb-3">
+            <label>Email address</label>
+            <input type="email" class="form-control" name="email" placeholder="Enter email" required>
+          </div>
+          <div class="mb-3">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Enter password" required>
+          </div>
+          <div class="mb-3">
+            <label>Select Role</label>
+            <select class="form-control" name="role" required>
+              <option value="admin">Admin</option>
+              <option value="engineer">Site Manager</option>
+              <option value="temp_user">Temp User</option>
+              <option value="regular_user">Regular User</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+      </div>
+
+      <!-- Signup Tab -->
+      <div class="tab-pane fade" id="signup" role="tabpanel">
+        <form method="post" action="{% url 'signup' %}" novalidate>
+          {% csrf_token %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+          <div class="mb-3">
+            <label>Email address</label>
+            <input type="email" class="form-control" name="email" placeholder="Enter email" required>
+          </div>
+          <div class="mb-3">
+            <label>Create Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Create password" required>
+          </div>
+          <div class="mb-3">
+            <label>Phone Number</label>
+            <input type="text" class="form-control" name="phone" placeholder="Enter phone number" required>
+          </div>
+          <div class="mb-3">
+            <label>Select Role</label>
+            <select class="form-control" name="role" required>
+              <option value="admin">Admin</option>
+              <option value="engineer">Site Manager</option>
+              <option value="temp_user">Temp User</option>
+              <option value="regular_user">Regular User</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/gps-validation.js' %}"></script>
+{% endblock %}

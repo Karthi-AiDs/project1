@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Add User{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 40px;
+  }
+  .form-title {
+    font-weight: 600;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .btn-submit {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: 500;
+    padding: 10px 20px;
+  }
+  .btn-submit:hover {
+    background-color: #0056b3;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container form-container">
+  <h2 class="form-title">Add New User</h2>
+  <form method="POST" action="{% url 'add_user' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="first_name" class="form-label">First Name</label>
+      <input type="text" class="form-control" id="first_name" name="first_name" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email address</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label for="role" class="form-label">Role</label>
+      <select class="form-select" id="role" name="role" required>
+        <option value="">Select role</option>
+        <option value="admin">Admin</option>
+        <option value="engineer">Site engineer</option>
+        <option value="regular_user">Regular User</option>
+        <option value="temp_user">Temporary User</option>
+      </select>
+    </div>
+    <div class="text-center">
+      <button type="submit" class="btn btn-submit">Create User</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

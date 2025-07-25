@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}User Management{% endblock %}
+
+{% block extra_css %}
+<style>
+  .user-table th, .user-table td {
+    vertical-align: middle;
+  }
+  .btn-add {
+    background-color: #007bff;
+    color: white;
+  }
+  .btn-delete {
+    background-color: #b10d1d;
+    color: white;
+  }
+  .btn-add:hover, .btn-delete:hover {
+    opacity: 0.9;
+  }
+
+  .blue-gradient-header {
+  background: linear-gradient(to right, #1e3a8a, #007bff);
+  color: white;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4 text-center">User Management</h2>
+
+  <!-- Add User Form -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Add New User
+    </div>
+    <div class="card-body">
+      <form method="POST" action="{% url 'add_user' %}">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-4">
+            <input type="text" name="email" class="form-control" placeholder="email" required>
+          </div>
+          <div class="col-md-4">
+            <input type="password" name="password" class="form-control" placeholder="password" required>
+          </div>
+          <div class="col-md-4">
+            <select name="role" class="form-select" required>
+              <option value="">Select Role</option>
+              <option value="admin">Admin</option>
+              <option value="engineer">Site engineer</option>
+              <option value="regular_user">Regular User</option>
+              <option value="temp_user">Temporary User</option>
+            </select>
+          </div>
+        </div>
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-add">Add User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- User List -->
+  <div class="card">
+  <div class="card-header blue-gradient-header">Existing Users</div>
+    <div class="card-body p-0">
+      <table class="table table-striped mb-0 user-table">
+        <thead class="blue-gradient-header">
+          <tr>
+            <th>SNO</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+            {% if user.role == "admin" %}
+            Admin
+            {% elif user.role == "engineer" %}
+            Site Engineer
+            {% elif user.role == "regular_user" %}
+            Regular user
+            {% elif user.role == "temp_user" %}
+            Temporary user
+            {% endif %}
+            </td>
+
+            <td>
+              <form method="POST" action="{% url 'delete_user' user.id %}" onsubmit="return confirm('Delete this user?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-delete">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center">No users found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

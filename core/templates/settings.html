@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block back_button %}
+  <button class="back-btn" onclick="history.back()">← Back</button>
+{% endblock %}
+{% block title %}System Settings | Vericon Constructions{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+  <div class="alert alert-success" id="msgBox">
+    {% for message in messages %}
+      {{ message }}
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="container py-5" style="font-family: 'Lato', sans-serif;">
+  <h2 class="mb-4">System Settings</h2>
+
+  <form method="POST" action="{% url 'update_profile' %}">
+    {% csrf_token %}
+
+    <div class="accordion" id="settingsAccordion">
+
+      <!-- General Settings -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingGeneral">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral" aria-expanded="true">
+            General Settings
+          </button>
+        </h2>
+        <div id="collapseGeneral" class="accordion-collapse collapse show" data-bs-parent="#settingsAccordion">
+          <div class="accordion-body">
+            <div class="mb-3">
+              <label for="firstName" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="firstName" name="firstName" placeholder="John" value="{{ request.user.first_name }}">
+            </div>
+            <div class="mb-3">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Doe" value="{{ request.user.last_name }}">
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="email" value="{{ request.user.email }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" id="phone" placeholder="+91 9876543210" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Change Password</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="********">
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-primary">Update Profile</button>
+              <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GPS Settings -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingGPS">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGPS">
+            GPS Settings
+          </button>
+        </h2>
+        <div id="collapseGPS" class="accordion-collapse collapse" data-bs-parent="#settingsAccordion">
+          <div class="accordion-body">
+            <label for="gpsRadius" class="form-label">GPS Attendance Radius (m)</label>
+            <input type="number" id="gpsRadius" class="form-control mb-2" value="500" name="gpsRadius">
+            <small class="text-warning">GPS validation must be within 500 m range.</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payroll Settings -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingPayroll">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePayroll">
+            Payroll Settings
+          </button>
+        </h2>
+        <div id="collapsePayroll" class="accordion-collapse collapse" data-bs-parent="#settingsAccordion">
+          <div class="accordion-body">
+            <label for="payrollStart" class="form-label">Payroll Cycle Start Date</label>
+            <input type="date" id="payrollStart" name="payrollStart" class="form-control mb-2">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="lockEdits" name="lockEdits">
+              <label class="form-check-label" for="lockEdits">Lock edits after cycle closes</label>
+            </div>
+            <small class="text-muted">Changes are logged and retained for 7 years.</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role Permissions -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingRole">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRole">
+            User Role Permissions
+          </button>
+        </h2>
+        <div id="collapseRole" class="accordion-collapse collapse" data-bs-parent="#settingsAccordion">
+          <div class="accordion-body">
+            <label for="roleSelect" class="form-label">Select Role</label>
+            <select id="roleSelect" class="form-select mb-2" name="role">
+              <option value="employee">Employee</option>
+              <option value="temp_user">Temporary User</option>
+              <option value="site_manager">Site Manager</option>
+              <option value="admin">Admin</option>
+            </select>
+            <small class="text-muted">All changes require admin approval.</small>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-success">Save All Settings</button>
+    </div>
+  </form>
+</div>
+<script>
+  setTimeout(function() {
+    const msg = document.getElementById("msgBox");
+    if (msg) {
+      msg.style.display = "none";
+    }
+  }, 3000);
+</script>
+{% endblock %}

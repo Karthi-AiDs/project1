@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payroll Management | Vericon Constructions{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #f0f4f8, #ffffff);
+    color: #1e3a8a;
+    margin: 0;
+    padding: 0;
+  }
+
+  .payroll-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 30px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-left: 6px solid #1e3a8a;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+  }
+
+  .header .title h1 {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+
+  .header p,
+  .header .current-period {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+  }
+
+  .card h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #002147;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fefefe;
+  }
+
+  .btn-submit {
+    margin-top: 25px;
+    padding: 12px 30px;
+    background-color: #0047ab;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .btn-submit:hover {
+    background-color: #003380;
+  }
+
+  .payroll-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 15px;
+  }
+
+  .payroll-table th,
+  .payroll-table td {
+    padding: 14px 12px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+  }
+
+  .payroll-table th {
+    background-color: #e9f0ff;
+    font-weight: 600;
+    color: #002147;
+  }
+
+  .status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .status.locked {
+    background-color: #fdecea;
+    color: #b02a37;
+  }
+
+  .status.open {
+    background-color: #e7f7ee;
+    color: #157347;
+  }
+
+  .badge {
+    background-color: #dee2e6;
+    color: #333;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .email {
+    font-size: 13px;
+    color: #666;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payroll-container">
+  <div class="header">
+    <div class="title">
+      <h1>Payroll Management</h1>
+      <p>Construction Management System</p>
+    </div>
+    <div class="current-period">
+      <strong>Current Period:</strong>
+      <span id="current-date"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Create New Payroll Record</h2>
+    <form id="payroll-form" method="post">
+      {% csrf_token %}
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="employee_name">Employee Name</label>
+          <input type="text" id="employee_name" name="employee_name" required>
+        </div>
+        <div class="form-group">
+          <label for="start_date">Start Date</label>
+          <input type="date" id="start_date" name="start_date" required>
+        </div>
+        <div class="form-group">
+          <label for="end_date">End Date</label>
+          <input type="date" id="end_date" name="end_date" required>
+        </div>
+        <div class="form-group">
+          <label for="total_hours">Total Hours</label>
+          <input type="number" id="total_hours" name="total_hours" step="0.1" min="0" required>
+        </div>
+        <div class="form-group">
+          <label for="hourly_rate">Hourly Rate (₹)</label>
+          <input type="number" id="hourly_rate" name="hourly_rate" step="0.01" min="0" required>
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <select id="location" name="location" required>
+            <option value="">Select</option>
+            <option value="Site A">Site A</option>
+            <option value="Site B">Site B</option>
+            <option value="Site C">Site C</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="calculated_salary">Calculated Salary</label>
+          <input type="number" id="calculated_salary" name="calculated_salary" readonly>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">Add Payroll</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Payroll Records</h2>
+    <table class="payroll-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Period</th>
+          <th>Hours</th>
+          <th>Rate</th>
+          <th>Location</th>
+          <th>Salary</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for payroll in page_obj %}
+        <tr>
+          <td><strong>{{ payroll.employee_name }}</strong></td>
+          <td>{{ payroll.start_date }} - {{ payroll.end_date }}</td>
+          <td>{{ payroll.total_hours }}</td>
+          <td>₹{{ payroll.hourly_rate }}</td>
+          <td>{{ payroll.location }}</td>
+          <td>₹{{ payroll.calculated_salary }}</td>
+          <td>
+            <span class="status {% if payroll.is_approved %}locked{% else %}open{% endif %}">
+              {% if payroll.is_approved %}Locked{% else %}Open{% endif %}
+            </span>
+          </td>
+          <td><span class="badge">Exported</span></td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" style="text-align: center;">No payroll records found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const totalHours = document.getElementById("total_hours");
+  const hourlyRate = document.getElementById("hourly_rate");
+  const salary = document.getElementById("calculated_salary");
+
+  totalHours.addEventListener("input", calculateSalary);
+  hourlyRate.addEventListener("input", calculateSalary);
+
+  function calculateSalary() {
+    const hours = parseFloat(totalHours.value) || 0;
+    const rate = parseFloat(hourlyRate.value) || 0;
+    salary.value = (hours * rate).toFixed(2);
+  }
+
+  const dateNow = new Date();
+  document.getElementById("current-date").textContent = dateNow.toLocaleDateString('en-IN', {
+    day: '2-digit', month: 'short', year: 'numeric'
+  });
+</script>
+{% endblock %}
