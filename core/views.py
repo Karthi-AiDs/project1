@@ -205,6 +205,7 @@ def user_dashboard(request):
 
     return render(request, 'userdash.html', context)
 
+
 # ----------------- PROFILE -----------------
 @login_required
 def update_profile(request):
