@@ -179,24 +179,22 @@ def site_dashboard(request):
 def user_dashboard(request):
     user = request.user
 
-    try:
-        employee = Employee.objects.get(user=user)
-    except Employee.DoesNotExist:
-        messages.error(request, "No employee profile found. Please contact admin.")
-        return redirect('login')  # or 'home' or any other safe fallback view
+    # Try to get employee profile if it exists
+    employee = getattr(user, 'employee_profile', None)
 
-    # Only reached if employee exists
-    attendance_qs = Attendance.objects.filter(user=user)
+    # Sample attendance logic (replace with actual DB values)
     attendance_present = 25
     attendance_total = 30
     absent_days = 5
 
     attendance_percent = (attendance_present / attendance_total * 100) if attendance_total > 0 else 0
-    recent_reports = Report.objects.filter(user=user).order_by('-created_at')[:3] 
+
+    # Fetch recent reports (if model Report exists)
+    recent_reports = Report.objects.filter(user=user).order_by('-created_at')[:3]
 
     context = {
         'user': user,
-        'employee': employee,
+        'employee': employee,  # can be None
         'attendance_present': attendance_present,
         'attendance_total': attendance_total,
         'absent_days': absent_days,
