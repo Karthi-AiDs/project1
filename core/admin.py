@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Attendance, Vendor, Material, Payroll, LoginLog, LoginSession, MFAToken
+from .models import User, Attendance, Vendor, Material, Payroll, LoginLog, LoginSession, MFAToken, Employee
 
 class UserAdmin(BaseUserAdmin):
     model = User
