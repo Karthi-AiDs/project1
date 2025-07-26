@@ -21,6 +21,7 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Employee)
 admin.site.register(Attendance)
 admin.site.register(Vendor)
 admin.site.register(Material)
